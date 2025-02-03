@@ -1,3 +1,60 @@
+# People Collections App
+
+A React application for managing people and collections, with features including:
+- User authentication
+- Image upload via Cloudinary
+- Real-time updates with Firebase
+- CRUD operations for both people and collections
+
+## Features
+- Create and manage people profiles with images
+- Organize people into custom collections
+- Edit person details and collection information
+- Real-time updates across all users
+- Secure authentication system
+- Responsive design for all devices
+
+## Setup
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Set up Firebase:
+   - Create a Firebase project
+   - Enable Authentication and Firestore
+   - Add your Firebase config to `src/firebase.js`
+
+4. Set up Cloudinary:
+   - Create a Cloudinary account
+   - Create an upload preset
+   - Update the Cloudinary configuration in the code
+
+5. Run the app:
+   ```bash
+   npm start
+   ```
+
+## Technologies Used
+- React
+- Firebase
+  - Authentication
+  - Firestore Database
+- Cloudinary for image storage
+- CSS3 for styling
+
+## Project Structure
+- `/src/components` - React components
+- `/src/firebase.js` - Firebase configuration
+- `/src/App.js` - Main application component
+- `/src/App.css` - Global styles
+
+## Contributing
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
