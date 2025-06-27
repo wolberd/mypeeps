@@ -645,12 +645,12 @@ button[type="submit"] {
 
 .remove-person-button {
   position: absolute;
-  top: 8px;
+  bottom: 8px;
   right: 8px;
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: rgba(220, 53, 69, 0.9);
+  background: rgba(0, 0, 0, 0.9);
   color: white;
   border: none;
   cursor: pointer;
@@ -664,7 +664,7 @@ button[type="submit"] {
 }
 
 .remove-person-button:hover {
-  background: rgba(220, 53, 69, 1);
+  background: rgba(0, 0, 0, 1);
 }
 
 .collection-people-preview {

@@ -28,7 +28,6 @@ function CollectionView({ collection, onBack, onUpdateCollection }) {
   return (
     <div className="collection-view">
       <div className="collection-header">
-        <button onClick={onBack} className="back-button">← Back to Collections</button>
         <h2>{collection.name}</h2>
         <p className="collection-description">{collection.description}</p>
       </div>
