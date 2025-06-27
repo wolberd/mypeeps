@@ -5,6 +5,8 @@ import PeopleList from './PeopleList';
 import AddPerson from './AddPerson';
 import CollectionsList from './CollectionsList';
 import CollectionView from './CollectionView';
+import PersonProfile from './PersonProfile';
+import EditPerson from './EditPerson';
 
 function TabLayout({ userId }) {
   const [activeTab, setActiveTab] = useState('list');
@@ -13,6 +15,8 @@ function TabLayout({ userId }) {
   const [selectedCollection, setSelectedCollection] = useState(null);
   const [showCollectionPicker, setShowCollectionPicker] = useState(false);
   const [selectedPerson, setSelectedPerson] = useState(null);
+  const [viewingPerson, setViewingPerson] = useState(null);
+  const [editingPerson, setEditingPerson] = useState(null);
 
   useEffect(() => {
     // People listener
@@ -64,10 +68,11 @@ function TabLayout({ userId }) {
       });
       
       console.log('Person added with ID:', docRef.id);
-      return docRef.id; // Return the ID so AddPerson knows it succeeded
+      setActiveTab('list'); // Return to people list after adding
+      return docRef.id;
     } catch (error) {
       console.error('Error adding person: ', error);
-      throw error; // Rethrow the error so AddPerson can handle it
+      throw error;
     }
   };
 
@@ -93,7 +98,8 @@ function TabLayout({ userId }) {
       const personRef = doc(db, 'people', updatedPerson.id);
       await updateDoc(personRef, {
         name: updatedPerson.name,
-        age: updatedPerson.age,
+        linkedinUrl: updatedPerson.linkedinUrl,
+        wikipediaUrl: updatedPerson.wikipediaUrl,
         imageUrl: updatedPerson.imageUrl,
         updatedAt: new Date().toISOString()
       });
@@ -124,33 +130,49 @@ function TabLayout({ userId }) {
       <div className="tabs">
         <button 
           className={activeTab === 'list' ? 'active' : ''} 
-          onClick={() => setActiveTab('list')}
+          onClick={() => {
+            setActiveTab('list');
+            setViewingPerson(null);
+            setEditingPerson(null);
+          }}
         >
-          People List
+          People
         </button>
         <button 
           className={activeTab === 'collections' ? 'active' : ''} 
-          onClick={() => setActiveTab('collections')}
+          onClick={() => {
+            setActiveTab('collections');
+            setSelectedCollection(null);
+            setViewingPerson(null);
+            setEditingPerson(null);
+          }}
         >
           Collections
-        </button>
-        <button 
-          className={activeTab === 'add' ? 'active' : ''} 
-          onClick={() => setActiveTab('add')}
-        >
-          Add Person
         </button>
       </div>
       
       <div className="tab-content">
-        {activeTab === 'list' && (
+        {activeTab === 'list' && !viewingPerson && !editingPerson && (
           <PeopleList 
             people={people} 
-            onPersonClick={(person) => {
+            onPersonClick={(person) => setViewingPerson(person)}
+            onUpdatePerson={handleUpdatePerson}
+            onAddPerson={() => setActiveTab('add')}
+          />
+        )}
+        {activeTab === 'list' && viewingPerson && (
+          <PersonProfile 
+            person={viewingPerson}
+            collections={collections}
+            onEdit={(person) => {
+              setEditingPerson(person);
+              setActiveTab('edit');
+            }}
+            onBack={() => setViewingPerson(null)}
+            onAddToCollection={(person) => {
               setSelectedPerson(person);
               setShowCollectionPicker(true);
             }}
-            onUpdatePerson={handleUpdatePerson}
           />
         )}
         {activeTab === 'collections' && !selectedCollection && (
@@ -165,9 +187,27 @@ function TabLayout({ userId }) {
           <CollectionView 
             collection={selectedCollection}
             onBack={() => setSelectedCollection(null)}
+            onUpdateCollection={(updatedCollection) => {
+              setSelectedCollection(updatedCollection);
+            }}
           />
         )}
         {activeTab === 'add' && <AddPerson onAddPerson={handleAddPerson} />}
+        {activeTab === 'edit' && editingPerson && (
+          <EditPerson 
+            person={editingPerson}
+            onSave={async (updatedPerson) => {
+              await handleUpdatePerson(updatedPerson);
+              setEditingPerson(null);
+              setActiveTab('list');
+              setViewingPerson(null);
+            }}
+            onCancel={() => {
+              setEditingPerson(null);
+              setActiveTab('list');
+            }}
+          />
+        )}
       </div>
 
       {showCollectionPicker && (
@@ -176,16 +216,21 @@ function TabLayout({ userId }) {
             <h3>Add to Collection</h3>
             <p>Select a collection for {selectedPerson.name}:</p>
             <div className="collections-list">
-              {collections.map(col => (
-                <button 
-                  key={col.id}
-                  onClick={() => handleAddToCollection(col.id)}
-                  className="collection-choice"
-                >
-                  {col.name}
-                </button>
-              ))}
+              {collections
+                .filter(col => !col.people.some(p => p.id === selectedPerson.id))
+                .map(col => (
+                  <button 
+                    key={col.id}
+                    onClick={() => handleAddToCollection(col.id)}
+                    className="collection-choice"
+                  >
+                    {col.name}
+                  </button>
+                ))}
             </div>
+            {collections.filter(col => !col.people.some(p => p.id === selectedPerson.id)).length === 0 && (
+              <p>No available collections to add to.</p>
+            )}
             <button onClick={() => setShowCollectionPicker(false)}>Cancel</button>
           </div>
         </div>

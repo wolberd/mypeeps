@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 function AddPerson({ onAddPerson }) {
   const [formData, setFormData] = useState({
     name: '',
-    age: '',
+    linkedinUrl: '',
+    wikipediaUrl: '',
     imageUrl: ''
   });
   const [selectedFile, setSelectedFile] = useState(null);
@@ -51,7 +52,7 @@ function AddPerson({ onAddPerson }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.name && formData.age && !isSubmitting) {
+    if (formData.name && !isSubmitting) {
       try {
         setIsSubmitting(true);
         let imageUrl = '';
@@ -64,7 +65,8 @@ function AddPerson({ onAddPerson }) {
 
         const personData = {
           name: formData.name,
-          age: Number(formData.age),
+          linkedinUrl: formData.linkedinUrl,
+          wikipediaUrl: formData.wikipediaUrl,
           imageUrl,
           createdAt: new Date().toISOString()
         };
@@ -73,7 +75,7 @@ function AddPerson({ onAddPerson }) {
         await onAddPerson(personData);
         
         // Reset form
-        setFormData({ name: '', age: '', imageUrl: '' });
+        setFormData({ name: '', linkedinUrl: '', wikipediaUrl: '', imageUrl: '' });
         setSelectedFile(null);
         setPreviewUrl(null);
         
@@ -96,7 +98,10 @@ function AddPerson({ onAddPerson }) {
 
   return (
     <div className="add-person">
-      <h2>Add New Person</h2>
+      <div className="add-person-header">
+        <button onClick={() => window.history.back()} className="back-button">← Back</button>
+        <h2>Add New Person</h2>
+      </div>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="name">Name:</label>
@@ -110,16 +115,25 @@ function AddPerson({ onAddPerson }) {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="age">Age:</label>
+          <label htmlFor="linkedinUrl">LinkedIn URL:</label>
           <input
-            type="number"
-            id="age"
-            name="age"
-            value={formData.age}
+            type="url"
+            id="linkedinUrl"
+            name="linkedinUrl"
+            value={formData.linkedinUrl}
             onChange={handleChange}
-            required
-            min="0"
-            max="150"
+            placeholder="https://linkedin.com/in/..."
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="wikipediaUrl">Wikipedia URL:</label>
+          <input
+            type="url"
+            id="wikipediaUrl"
+            name="wikipediaUrl"
+            value={formData.wikipediaUrl}
+            onChange={handleChange}
+            placeholder="https://wikipedia.org/wiki/..."
           />
         </div>
         <div className="form-group">

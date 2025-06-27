@@ -92,6 +92,28 @@ function CollectionsList({ collections, onSelectCollection, userId, onUpdateColl
               <h3>{col.name}</h3>
               <p>{col.description}</p>
               <p className="people-count">{col.people.length} people</p>
+              
+              {col.people.length > 0 && (
+                <div className="collection-people-preview">
+                  {col.people.slice(0, 3).map((person, index) => (
+                    <div key={person.id} className="preview-person-image">
+                      {person.imageUrl ? (
+                        <img src={person.imageUrl} alt={person.name} />
+                      ) : (
+                        <div className="preview-placeholder">
+                          {person.name.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                  {col.people.length > 3 && (
+                    <div className="more-people-indicator">
+                      +{col.people.length - 3}
+                    </div>
+                  )}
+                </div>
+              )}
+              
               <button 
                 className="edit-button"
                 onClick={(e) => handleEditClick(e, col)}

@@ -1,30 +1,12 @@
-import React, { useState } from 'react';
-import EditPerson from './EditPerson';
+import React from 'react';
 
-function PeopleList({ people, onPersonClick, onUpdatePerson }) {
-  const [editingPerson, setEditingPerson] = useState(null);
-
-  const handleEditClick = (e, person) => {
-    e.stopPropagation(); // Prevent triggering the card click
-    setEditingPerson(person);
-  };
-
-  if (editingPerson) {
-    return (
-      <EditPerson 
-        person={editingPerson}
-        onSave={async (updatedPerson) => {
-          await onUpdatePerson(updatedPerson);
-          setEditingPerson(null);
-        }}
-        onCancel={() => setEditingPerson(null)}
-      />
-    );
-  }
-
+function PeopleList({ people, onPersonClick, onAddPerson }) {
   return (
     <div className="people-list">
-      <h2>People</h2>
+      <div className="people-header">
+        <h2>People</h2>
+        <button onClick={onAddPerson} className="add-button">+</button>
+      </div>
       {people.length === 0 ? (
         <p>No people added yet.</p>
       ) : (
@@ -46,13 +28,28 @@ function PeopleList({ people, onPersonClick, onUpdatePerson }) {
               </div>
               <div className="person-info">
                 <h3>{person.name}</h3>
-                <p>{person.age} years old</p>
-                <button 
-                  className="edit-button"
-                  onClick={(e) => handleEditClick(e, person)}
-                >
-                  Edit
-                </button>
+                <div className="person-links">
+                  {person.linkedinUrl && (
+                    <a 
+                      href={person.linkedinUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      LinkedIn
+                    </a>
+                  )}
+                  {person.wikipediaUrl && (
+                    <a 
+                      href={person.wikipediaUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      Wikipedia
+                    </a>
+                  )}
+                </div>
               </div>
             </div>
           ))}

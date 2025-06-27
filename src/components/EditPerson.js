@@ -3,8 +3,9 @@ import React, { useState } from 'react';
 function EditPerson({ person, onSave, onCancel }) {
   const [formData, setFormData] = useState({
     name: person.name,
-    age: person.age,
-    imageUrl: person.imageUrl
+    linkedinUrl: person.linkedinUrl || '',
+    wikipediaUrl: person.wikipediaUrl || '',
+    imageUrl: person.imageUrl || ''
   });
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -51,7 +52,7 @@ function EditPerson({ person, onSave, onCancel }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.name && formData.age && !isSubmitting) {
+    if (formData.name && !isSubmitting) {
       try {
         setIsSubmitting(true);
         let imageUrl = formData.imageUrl;
@@ -65,7 +66,8 @@ function EditPerson({ person, onSave, onCancel }) {
         const updatedPerson = {
           ...person,
           name: formData.name,
-          age: Number(formData.age),
+          linkedinUrl: formData.linkedinUrl,
+          wikipediaUrl: formData.wikipediaUrl,
           imageUrl,
           updatedAt: new Date().toISOString()
         };
@@ -104,16 +106,25 @@ function EditPerson({ person, onSave, onCancel }) {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="age">Age:</label>
+          <label htmlFor="linkedinUrl">LinkedIn URL:</label>
           <input
-            type="number"
-            id="age"
-            name="age"
-            value={formData.age}
+            type="url"
+            id="linkedinUrl"
+            name="linkedinUrl"
+            value={formData.linkedinUrl}
             onChange={handleChange}
-            required
-            min="0"
-            max="150"
+            placeholder="https://linkedin.com/in/..."
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="wikipediaUrl">Wikipedia URL:</label>
+          <input
+            type="url"
+            id="wikipediaUrl"
+            name="wikipediaUrl"
+            value={formData.wikipediaUrl}
+            onChange={handleChange}
+            placeholder="https://wikipedia.org/wiki/..."
           />
         </div>
         <div className="form-group">

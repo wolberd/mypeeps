@@ -29,7 +29,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>My Peeps App</h1>
+        <h1>Interest Network</h1>
         {user && (
           <button className="logout-button" onClick={handleLogout}>
             Logout

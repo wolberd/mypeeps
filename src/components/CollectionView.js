@@ -2,7 +2,29 @@ import React from 'react';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 
-function CollectionView({ collection, onBack }) {
+function CollectionView({ collection, onBack, onUpdateCollection }) {
+  const handleRemovePerson = async (personToRemove) => {
+    try {
+      const updatedPeople = collection.people.filter(p => p.id !== personToRemove.id);
+      
+      const collectionRef = doc(db, 'collections', collection.id);
+      await updateDoc(collectionRef, {
+        people: updatedPeople
+      });
+      
+      // Update the local collection state
+      onUpdateCollection({
+        ...collection,
+        people: updatedPeople
+      });
+      
+      console.log('Person removed from collection successfully');
+    } catch (error) {
+      console.error('Error removing person from collection:', error);
+      alert('Error removing person from collection. Please try again.');
+    }
+  };
+
   return (
     <div className="collection-view">
       <div className="collection-header">
@@ -16,7 +38,7 @@ function CollectionView({ collection, onBack }) {
       ) : (
         <div className="people-grid">
           {collection.people.map((person) => (
-            <div key={person.id} className="person-card">
+            <div key={person.id} className="person-card collection-person-card">
               <div className="person-image">
                 {person.imageUrl ? (
                   <img src={person.imageUrl} alt={person.name} />
@@ -28,8 +50,39 @@ function CollectionView({ collection, onBack }) {
               </div>
               <div className="person-info">
                 <h3>{person.name}</h3>
-                <p>{person.age} years old</p>
+                <div className="person-links">
+                  {person.linkedinUrl && (
+                    <a 
+                      href={person.linkedinUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      LinkedIn
+                    </a>
+                  )}
+                  {person.wikipediaUrl && (
+                    <a 
+                      href={person.wikipediaUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      Wikipedia
+                    </a>
+                  )}
+                </div>
               </div>
+              <button 
+                className="remove-person-button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRemovePerson(person);
+                }}
+                title="Remove from collection"
+              >
+                ×
+              </button>
             </div>
           ))}
         </div>
