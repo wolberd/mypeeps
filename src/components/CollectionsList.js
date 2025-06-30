@@ -3,7 +3,7 @@ import { collection, addDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import EditCollection from './EditCollection';
 
-function CollectionsList({ collections, onSelectCollection, userId, onUpdateCollection }) {
+function CollectionsList({ collections, onSelectCollection, userId, onUpdateCollection, onPersonClick }) {
   const [showNewForm, setShowNewForm] = useState(false);
   const [newCollection, setNewCollection] = useState({ name: '', description: '' });
   const [editingCollection, setEditingCollection] = useState(null);
@@ -28,6 +28,11 @@ function CollectionsList({ collections, onSelectCollection, userId, onUpdateColl
   const handleEditClick = (e, collection) => {
     e.stopPropagation();
     setEditingCollection(collection);
+  };
+
+  const handlePersonClick = (e, person) => {
+    e.stopPropagation();
+    onPersonClick(person);
   };
 
   if (editingCollection) {
@@ -96,7 +101,12 @@ function CollectionsList({ collections, onSelectCollection, userId, onUpdateColl
               {col.people.length > 0 && (
                 <div className="collection-people-preview">
                   {col.people.slice(0, 3).map((person, index) => (
-                    <div key={person.id} className="preview-person-image">
+                    <div 
+                      key={person.id} 
+                      className="preview-person-image"
+                      onClick={(e) => handlePersonClick(e, person)}
+                      title={`View ${person.name}'s profile`}
+                    >
                       {person.imageUrl ? (
                         <img src={person.imageUrl} alt={person.name} />
                       ) : (

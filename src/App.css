@@ -421,12 +421,12 @@ button[type="submit"] {
 }
 
 .collection-view .person-card {
-  cursor: default;
+  cursor: pointer;
 }
 
 .collection-view .person-card:hover {
-  transform: none;
-  box-shadow: none;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .person-links {
@@ -682,6 +682,13 @@ button[type="submit"] {
   overflow: hidden;
   border: 2px solid #fff;
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.preview-person-image:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
 }
 
 .preview-person-image img {
@@ -732,6 +739,13 @@ button[type="submit"] {
   min-width: 200px;
   max-width: 250px;
   flex: 1;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.profile-collections .collection-item:hover {
+  background: #e9ecef;
+  transform: translateY(-1px);
 }
 
 .profile-collections .collection-item h4 {
@@ -763,4 +777,270 @@ button[type="submit"] {
 
 .edit-profile-icon:hover {
   background: #0056b3;
+}
+
+/* Articles Styles */
+.articles-container {
+  padding: 20px;
+}
+
+.articles-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 0 20px;
+}
+
+.articles-header h2 {
+  margin: 0;
+}
+
+.articles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.article-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  background: white;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.article-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.article-title {
+  margin: 0 0 10px 0;
+  font-size: 1.2em;
+}
+
+.article-title a {
+  color: #333;
+  text-decoration: none;
+}
+
+.article-title a:hover {
+  color: #007bff;
+  text-decoration: underline;
+}
+
+.article-description {
+  color: #666;
+  margin: 0 0 15px 0;
+  line-height: 1.5;
+}
+
+.article-tagged-people {
+  margin-bottom: 15px;
+}
+
+.tagged-people-images {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tagged-person-image {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tagged-person-image:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.tagged-person-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tagged-person-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  color: #666;
+}
+
+.article-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9em;
+  color: #999;
+}
+
+.article-date {
+  font-style: italic;
+}
+
+.article-tags {
+  background: #e9ecef;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.8em;
+}
+
+.add-article {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.add-article-header {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.add-article-header h2 {
+  margin: 0;
+}
+
+.people-selection {
+  margin-top: 10px;
+}
+
+.people-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.person-tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 2px solid #ddd;
+  border-radius: 20px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9em;
+}
+
+.person-tag:hover {
+  border-color: #007bff;
+  background: #f8f9fa;
+}
+
+.person-tag.selected {
+  border-color: #28a745;
+  background: #d4edda;
+  color: #155724;
+}
+
+.person-tag-image {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.person-tag-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.person-tag-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  color: #666;
+}
+
+/* Profile Articles Styles */
+.profile-articles {
+  margin-top: 40px;
+  text-align: left;
+}
+
+.profile-articles .articles-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.profile-articles h3 {
+  margin: 0;
+}
+
+.profile-articles-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.profile-article-item {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 15px;
+  border-left: 4px solid #007bff;
+}
+
+.profile-article-title {
+  margin: 0 0 8px 0;
+  font-size: 1.1em;
+}
+
+.profile-article-title a {
+  color: #333;
+  text-decoration: none;
+}
+
+.profile-article-title a:hover {
+  color: #007bff;
+  text-decoration: underline;
+}
+
+.profile-article-description {
+  margin: 0 0 10px 0;
+  color: #666;
+  line-height: 1.4;
+}
+
+.profile-article-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85em;
+  color: #999;
+}
+
+.profile-article-date {
+  font-style: italic;
+}
+
+.profile-article-other-tags {
+  color: #666;
+  font-style: italic;
 }

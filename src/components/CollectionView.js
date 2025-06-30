@@ -2,7 +2,7 @@ import React from 'react';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 
-function CollectionView({ collection, onBack, onUpdateCollection }) {
+function CollectionView({ collection, onBack, onUpdateCollection, onPersonClick }) {
   const handleRemovePerson = async (personToRemove) => {
     try {
       const updatedPeople = collection.people.filter(p => p.id !== personToRemove.id);
@@ -37,7 +37,11 @@ function CollectionView({ collection, onBack, onUpdateCollection }) {
       ) : (
         <div className="people-grid">
           {collection.people.map((person) => (
-            <div key={person.id} className="person-card collection-person-card">
+            <div 
+              key={person.id} 
+              className="person-card collection-person-card"
+              onClick={() => onPersonClick(person)}
+            >
               <div className="person-image">
                 {person.imageUrl ? (
                   <img src={person.imageUrl} alt={person.name} />

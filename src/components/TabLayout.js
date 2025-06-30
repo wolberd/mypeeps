@@ -7,11 +7,14 @@ import CollectionsList from './CollectionsList';
 import CollectionView from './CollectionView';
 import PersonProfile from './PersonProfile';
 import EditPerson from './EditPerson';
+import ArticlesList from './ArticlesList';
+import AddArticle from './AddArticle';
 
 function TabLayout({ userId }) {
   const [activeTab, setActiveTab] = useState('list');
   const [people, setPeople] = useState([]);
   const [collections, setCollections] = useState([]);
+  const [articles, setArticles] = useState([]);
   const [selectedCollection, setSelectedCollection] = useState(null);
   const [showCollectionPicker, setShowCollectionPicker] = useState(false);
   const [selectedPerson, setSelectedPerson] = useState(null);
@@ -47,9 +50,26 @@ function TabLayout({ userId }) {
       setCollections(collectionsData);
     });
 
+    // Articles listener
+    const articlesQuery = query(
+      collection(db, 'articles'),
+      where('userId', '==', userId)
+    );
+
+    const unsubscribeArticles = onSnapshot(articlesQuery, (snapshot) => {
+      const articlesData = [];
+      snapshot.forEach((doc) => {
+        articlesData.push({ id: doc.id, ...doc.data() });
+      });
+      // Sort articles by creation date (most recent first)
+      articlesData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setArticles(articlesData);
+    });
+
     return () => {
       unsubscribePeople();
       unsubscribeCollections();
+      unsubscribeArticles();
     };
   }, [userId]);
 
@@ -72,6 +92,29 @@ function TabLayout({ userId }) {
       return docRef.id;
     } catch (error) {
       console.error('Error adding person: ', error);
+      throw error;
+    }
+  };
+
+  const handleAddArticle = async (article) => {
+    try {
+      console.log('Starting to add article:', article);
+      
+      if (!userId) {
+        throw new Error('No user ID available');
+      }
+
+      const docRef = await addDoc(collection(db, 'articles'), {
+        ...article,
+        userId: userId,
+        createdAt: new Date().toISOString()
+      });
+      
+      console.log('Article added with ID:', docRef.id);
+      setActiveTab('articles'); // Return to articles list after adding
+      return docRef.id;
+    } catch (error) {
+      console.error('Error adding article: ', error);
       throw error;
     }
   };
@@ -149,6 +192,16 @@ function TabLayout({ userId }) {
         >
           Collections
         </button>
+        <button 
+          className={activeTab === 'articles' ? 'active' : ''} 
+          onClick={() => {
+            setActiveTab('articles');
+            setViewingPerson(null);
+            setEditingPerson(null);
+          }}
+        >
+          Articles
+        </button>
       </div>
       
       <div className="tab-content">
@@ -164,6 +217,7 @@ function TabLayout({ userId }) {
           <PersonProfile 
             person={viewingPerson}
             collections={collections}
+            articles={articles}
             onEdit={(person) => {
               setEditingPerson(person);
               setActiveTab('edit');
@@ -173,6 +227,11 @@ function TabLayout({ userId }) {
               setSelectedPerson(person);
               setShowCollectionPicker(true);
             }}
+            onPersonClick={(person) => setViewingPerson(person)}
+            onCollectionClick={(collection) => {
+              setSelectedCollection(collection);
+              setActiveTab('collections');
+            }}
           />
         )}
         {activeTab === 'collections' && !selectedCollection && (
@@ -181,6 +240,10 @@ function TabLayout({ userId }) {
             onSelectCollection={setSelectedCollection}
             userId={userId}
             onUpdateCollection={handleUpdateCollection}
+            onPersonClick={(person) => {
+              setViewingPerson(person);
+              setActiveTab('list');
+            }}
           />
         )}
         {activeTab === 'collections' && selectedCollection && (
@@ -190,9 +253,30 @@ function TabLayout({ userId }) {
             onUpdateCollection={(updatedCollection) => {
               setSelectedCollection(updatedCollection);
             }}
+            onPersonClick={(person) => {
+              setViewingPerson(person);
+              setActiveTab('list');
+            }}
+          />
+        )}
+        {activeTab === 'articles' && (
+          <ArticlesList 
+            articles={articles}
+            onAddArticle={() => setActiveTab('add-article')}
+            onPersonClick={(person) => {
+              setViewingPerson(person);
+              setActiveTab('list');
+            }}
           />
         )}
         {activeTab === 'add' && <AddPerson onAddPerson={handleAddPerson} />}
+        {activeTab === 'add-article' && (
+          <AddArticle 
+            onAddArticle={handleAddArticle}
+            people={people}
+            onCancel={() => setActiveTab('articles')}
+          />
+        )}
         {activeTab === 'edit' && editingPerson && (
           <EditPerson 
             person={editingPerson}

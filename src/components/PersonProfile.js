@@ -1,14 +1,16 @@
 import React from 'react';
 
-function PersonProfile({ person, collections, onEdit, onBack, onAddToCollection }) {
+function PersonProfile({ person, collections, articles, onEdit, onBack, onAddToCollection, onPersonClick, onCollectionClick }) {
   const personCollections = collections.filter(col => 
     col.people.some(p => p.id === person.id)
   );
 
+  const personArticles = articles.filter(article => 
+    article.taggedPeople && article.taggedPeople.some(p => p.id === person.id)
+  );
+
   return (
     <div className="person-profile">
-      <button onClick={onBack} className="back-button">← Back to People</button>
-      
       <div className="profile-header">
         <div className="profile-image">
           {person.imageUrl ? (
@@ -74,14 +76,26 @@ function PersonProfile({ person, collections, onEdit, onBack, onAddToCollection 
         ) : (
           <div className="collections-list">
             {personCollections.map(collection => (
-              <div key={collection.id} className="collection-item">
+              <div 
+                key={collection.id} 
+                className="collection-item"
+                onClick={() => onCollectionClick(collection)}
+              >
                 <h4>{collection.name}</h4>
                 <p>{collection.description}</p>
                 
                 {collection.people.length > 0 && (
                   <div className="collection-people-preview">
                     {collection.people.slice(0, 3).map((person, index) => (
-                      <div key={person.id} className="preview-person-image">
+                      <div 
+                        key={person.id} 
+                        className="preview-person-image"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onPersonClick(person);
+                        }}
+                        title={`View ${person.name}'s profile`}
+                      >
                         {person.imageUrl ? (
                           <img src={person.imageUrl} alt={person.name} />
                         ) : (
@@ -98,6 +112,43 @@ function PersonProfile({ person, collections, onEdit, onBack, onAddToCollection 
                     )}
                   </div>
                 )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="profile-articles">
+        <div className="articles-header">
+          <h3>Tagged in Articles:</h3>
+        </div>
+        {personArticles.length === 0 ? (
+          <p>Not tagged in any articles yet.</p>
+        ) : (
+          <div className="profile-articles-list">
+            {personArticles.map(article => (
+              <div key={article.id} className="profile-article-item">
+                <h4 className="profile-article-title">
+                  <a 
+                    href={article.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {article.title}
+                  </a>
+                </h4>
+                <p className="profile-article-description">{article.description}</p>
+                <div className="profile-article-meta">
+                  <span className="profile-article-date">
+                    {new Date(article.createdAt).toLocaleDateString()}
+                  </span>
+                  {article.taggedPeople && article.taggedPeople.length > 1 && (
+                    <span className="profile-article-other-tags">
+                      Also tagged: {article.taggedPeople.filter(p => p.id !== person.id).map(p => p.name).join(', ')}
+                    </span>
+                  )}
+                </div>
               </div>
             ))}
           </div>
